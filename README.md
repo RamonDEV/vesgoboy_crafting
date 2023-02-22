@@ -14,3 +14,5 @@ redem_roleplay FrameWork ```https://github.com/RedEM-RP/redem_roleplay```
 redemrp_menu ```https://github.com/RamonDEV/redemrp_menu```
 
 Enjoy :)
+
+You need to create itens to craft....

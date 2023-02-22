@@ -77,7 +77,7 @@ Config.Drinks = {
 }
 
 Config.Text = {
-    norecipe = "Você não tem a Receita para Produzir",
-    nohaveitem = "Você não tem o necessário para produzir falta",
-    received = "Você Produziu"
+    norecipe = "You Don't Have the Recipe to Produce",
+    nohaveitem = "You do not have what it takes to produce lacks",
+    received = "You Produced"
 }
