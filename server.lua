@@ -21,7 +21,6 @@ AddEventHandler("vesgoboy_craft:crafting",function(label,recipe,amount,resultite
 		recipeqtd = recipeitem.ItemAmount
         if recipeqtd < 1 then
             RedEM.Functions.NotifyLeft(_source, "Saloon", Config.Text.norecipe.." "..label, Config.Textures.cross[1], Config.Textures.cross[2], 3000)
-            print("você nao tem a receita")
             return false
         end
     end

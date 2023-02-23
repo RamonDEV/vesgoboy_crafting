@@ -1,12 +1,10 @@
 RedEM = exports["redem_roleplay"]:RedEM()
-
 ----------------------------REDEMRP_MENU----------------------------
 MenuData = {}
 TriggerEvent("rdr_menu:getData",function(call)
     MenuData = call
 end)
 ----------------------------REDEMRP_MENU----------------------------
-
 local OpenPrompt
 local PromptGroup = GetRandomIntInRange(0, 0xffffff)
 local activebuttom = false
@@ -17,7 +15,7 @@ Citizen.CreateThread(function()
         Citizen.Wait(1)
         local ped = PlayerPedId()
         local pcoords = GetEntityCoords(ped)
-        local PlayerData = RedEM.GetPlayerData() -- REDEMRP:2023 PEGAR TRABALHO DO JOGADOR
+        local PlayerData = RedEM.GetPlayerData() -- REDEMRP:2023 PEGAR ALGUMAS FUNCÕES COMO JOB E JOBGRADE NESSE SISTEMA
         local pjob = PlayerData.job -- SETANDO VARIAVEL PARA O TRABALHO DO JOGADOR. PODE USAR DIRETO ASSIM PlayerData.job ao inves da variavel trabalho!!!!
 
         for ib,iv in pairs(Config.Crafting) do -- LOOP(FOR)
@@ -55,6 +53,7 @@ function MenuCraft(jobcraft,jobgrade)
         {label = "Inventory", value = 'inven', desc = "Job Inventory"},
     }
 
+    ---AQUI VOCÊ COLOCA O JOBGRADE PARA SETAR EMPREGADO DE CHEFE---
     if jobgrade > 4 then
         table.insert(elements, {label = "Hire Employees", value = "hiremployees", desc = "Hire Employees"})
         table.insert(elements, {label = "Fire an employee", value = "firemployees", desc = "Fire Employees"})
