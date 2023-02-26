@@ -24,19 +24,21 @@ Citizen.CreateThread(function()
             local jobgrade = PlayerData.jobgrade
             local tablecoords = iv.tablecraft
             local between = GetDistanceBetweenCoords(pcoords, tablecoords, true)
-            if between < 1.5 and not activebuttom and pjob == jobcraft then
-                if IsPedOnMount(PlayerPedId()) or IsPedInAnyVehicle(PlayerPedId()) or IsPedDeadOrDying(PlayerPedId()) or IsEntityInWater(PlayerPedId()) or IsPedClimbing(PlayerPedId()) or not IsPedOnFoot(PlayerPedId()) or IsPedSittingInAnyVehicle(PlayerPedId()) then
-                    MenuData.CloseAll()
-                    return false
-                end
+            if between < 1.5 and not activebuttom then
+                if pjob == jobcraft or jobcraft == false then
+                    if IsPedOnMount(PlayerPedId()) or IsPedInAnyVehicle(PlayerPedId()) or IsPedDeadOrDying(PlayerPedId()) or IsEntityInWater(PlayerPedId()) or IsPedClimbing(PlayerPedId()) or not IsPedOnFoot(PlayerPedId()) or IsPedSittingInAnyVehicle(PlayerPedId()) then
+                        MenuData.CloseAll()
+                        return false
+                    end
 
-                local label  = CreateVarString(10, 'LITERAL_STRING', name)
-                PromptSetActiveGroupThisFrame(PromptGroup, label)
-                if Citizen.InvokeNative(0xE0F65F0640EF0617,OpenPrompt) then -- UiPromptHasHoldModeCompleted 
-                    activebuttom = true
-                    MenuCraft(jobcraft,jobgrade)
-                    Citizen.Wait(2000)
-                    activebuttom = false
+                    local label  = CreateVarString(10, 'LITERAL_STRING', name)
+                    PromptSetActiveGroupThisFrame(PromptGroup, label)
+                    if Citizen.InvokeNative(0xE0F65F0640EF0617,OpenPrompt) then -- UiPromptHasHoldModeCompleted 
+                        activebuttom = true
+                        MenuCraft(jobcraft,jobgrade)
+                        Citizen.Wait(2000)
+                        activebuttom = false
+                    end
                 end
             elseif between > 1.5 and between < 2.0 then
                 MenuData.CloseAll()
@@ -47,18 +49,26 @@ end)
 
 function MenuCraft(jobcraft,jobgrade)
     MenuData.CloseAll()
-    local elements = {
-        {label = "Foods", value = 'foods', desc = "Cooking"},
-        {label = "Drinks", value = 'drinks', desc = "Drinks"},
-        {label = "Inventory", value = 'inven', desc = "Job Inventory"},
-    }
+    local elements = {}
 
-    ---AQUI VOCÊ COLOCA O JOBGRADE PARA SETAR EMPREGADO DE CHEFE---
-    if jobgrade > 4 then
-        table.insert(elements, {label = "Hire Employees", value = "hiremployees", desc = "Hire Employees"})
-        table.insert(elements, {label = "Fire an employee", value = "firemployees", desc = "Fire Employees"})
+    if jobcraft == false then
+        elements = {
+            {label = "Foods", value = 'foods', desc = "Cooking"},
+            {label = "Drinks", value = 'drinks', desc = "Drinks"},
+        }
+    else
+        elements = {
+            {label = "Foods", value = 'foods', desc = "Cooking"},
+            {label = "Drinks", value = 'drinks', desc = "Drinks"},
+            {label = "Inventory", value = 'inven', desc = "Job Inventory"},
+        }
+        ---AQUI VOCÊ COLOCA O JOBGRADE PARA SETAR EMPREGADO DE CHEFE---
+        if jobgrade > 4 then
+            table.insert(elements, {label = "Hire Employees", value = "hiremployees", desc = "Hire Employees"})
+            table.insert(elements, {label = "Fire an employee", value = "firemployees", desc = "Fire Employees"})
+        end
     end
-
+    
     MenuData.Open(
     'default', GetCurrentResourceName(), 'Saloon_Menu',
     {
@@ -72,9 +82,9 @@ function MenuCraft(jobcraft,jobgrade)
     },
     function(data, menu)
         if(data.current.value == 'foods') then
-            MenuCook()
+            MenuCook(jobcraft,jobgrade)
         elseif(data.current.value == 'drinks') then
-            MenuDrinks()
+            MenuDrinks(jobcraft,jobgrade)
         elseif(data.current.value == 'inven') then
             menu.close()
             TriggerServerEvent("vesgoboy_craft:storage", jobcraft, 1500) -- JOB NAME AND STASH WEIGHT
@@ -104,6 +114,154 @@ function MenuCraft(jobcraft,jobgrade)
     function(data, menu)
         menu.close()
     end)  
+end
+
+function MenuCook(jobcraft,jobgrade)
+    MenuData.CloseAll()
+    local elements = {}
+    if jobcraft == false then
+        for ib,iv in pairs(Config.FoodsNoJob) do
+            local labelitem = iv.label
+            local recipe = iv.recipe
+            local amount = iv.amount
+            local desc = iv.desc
+            local resultitem = iv.resultitem
+            local items = iv.items
+
+            table.insert(elements, {
+                label = labelitem, 
+                recipe = recipe,
+                amount = amount,
+                desc = "Produce<br>"..labelitem,
+                subdesc = "Ingredients<br><span style='color:red; font-size:20px;'>"..desc.."</span>",
+                resultitem = resultitem,
+                items = items,
+                value = ib,
+            })
+        end
+    else
+        for ib,iv in pairs(Config.Foods) do
+            local labelitem = iv.label
+            local recipe = iv.recipe
+            local amount = iv.amount
+            local desc = iv.desc
+            local resultitem = iv.resultitem
+            local items = iv.items
+
+            table.insert(elements, {
+                label = labelitem, 
+                recipe = recipe,
+                amount = amount,
+                desc = "Produce<br>"..labelitem,
+                subdesc = "Ingredients<br><span style='color:red; font-size:20px;'>"..desc.."</span>",
+                resultitem = resultitem,
+                items = items,
+                value = ib,
+            })
+        end
+    end
+    MenuData.Open(
+    'default', GetCurrentResourceName(), 'Saloon_Menu',
+    {
+        title    = 'Saloon',
+
+        subtext    = 'Select Your Production',
+
+        align    = 'top-right',
+
+        elements = elements,
+    },
+    function(data, menu)
+        if(data.current.value) then
+            TriggerServerEvent("vesgoboy_craft:crafting",data.current.label,data.current.recipe,data.current.amount,data.current.resultitem,data.current.items)
+        end
+    end,
+    function(data, menu)
+        menu.close()
+        MenuCraft(jobcraft,jobgrade)
+    end)  
+end
+
+function MenuDrinks(jobcraft,jobgrade)
+    MenuData.CloseAll()
+    local elements = {}
+
+    if jobcraft == false then
+        for ib,iv in pairs(Config.DrinksNoJob) do
+            local labelitem = iv.label
+            local recipe = iv.recipe
+            local amount = iv.amount
+            local desc = iv.desc
+            local resultitem = iv.resultitem
+            local items = iv.items
+
+            table.insert(elements, {
+                label = labelitem, 
+                recipe = recipe,
+                amount = amount,
+                desc = "Produce<br>"..labelitem,
+                subdesc = "Ingredients<br><span style='color:red; font-size:20px;'>"..desc.."</span>",
+                resultitem = resultitem,
+                items = items,
+                value = ib,
+            })
+        end
+    else
+        for ib,iv in pairs(Config.Drinks) do
+            local labelitem = iv.label
+            local recipe = iv.recipe
+            local amount = iv.amount
+            local desc = iv.desc
+            local resultitem = iv.resultitem
+            local items = iv.items
+
+            table.insert(elements, {
+                label = labelitem, 
+                recipe = recipe,
+                amount = amount,
+                desc = "Produce<br>"..labelitem,
+                subdesc = "Ingredients<br><span style='color:red; font-size:20px;'>"..desc.."</span>",
+                resultitem = resultitem,
+                items = items,
+                value = ib,
+            })
+        end
+    end
+    MenuData.Open(
+    'default', GetCurrentResourceName(), 'Saloon_Menu',
+    {
+        title    = 'Saloon',
+
+        subtext    = 'Select Your Production',
+
+        align    = 'top-right',
+
+        elements = elements,
+    },
+    function(data, menu)
+        if(data.current.value) then
+            TriggerServerEvent("vesgoboy_craft:crafting",data.current.label,data.current.recipe,data.current.amount,data.current.resultitem,data.current.items)
+        end
+    end,
+    function(data, menu)
+        menu.close()
+        MenuCraft(jobcraft,jobgrade)
+    end)  
+end
+
+function SetupOpenPrompt()
+    Citizen.CreateThread(function()
+        local str = 'Enter Menu'
+        OpenPrompt = PromptRegisterBegin()
+        PromptSetControlAction(OpenPrompt, 0xCEFD9220) -- E --==BOTÃO==--
+        str = CreateVarString(10, 'LITERAL_STRING', str)
+        PromptSetText(OpenPrompt, str)
+        PromptSetEnabled(OpenPrompt, 1) -- 1 verdaeiro 0 falso
+        PromptSetVisible(OpenPrompt, 1) -- 1 verdaeiro 0 falso
+		PromptSetHoldMode(OpenPrompt, 5) -- UiPromptHasHoldModeCompleted -- SEGUNDOS
+		PromptSetGroup(OpenPrompt, PromptGroup)
+		PromptRegisterEnd(OpenPrompt)
+    end)
 end
 
 FiringPlayer = nil
@@ -155,109 +313,6 @@ RegisterNetEvent("vesgoboy_craft:client:ViewFireList", function(FireList)
         menu.close()
     end)
 end)
-
-function MenuCook()
-    MenuData.CloseAll()
-    local elements = {}
-    for ib,iv in pairs(Config.Foods) do
-        local labelitem = iv.label
-        local recipe = iv.recipe
-        local amount = iv.amount
-        local desc = iv.desc
-        local resultitem = iv.resultitem
-        local items = iv.items
-
-        table.insert(elements, {
-            label = labelitem, 
-            recipe = recipe,
-            amount = amount,
-            desc = "Produce<br>"..labelitem,
-            subdesc = "Ingredients<br><span style='color:red; font-size:20px;'>"..desc.."</span>",
-            resultitem = resultitem,
-            items = items,
-            value = ib,
-        })
-    end
-    MenuData.Open(
-    'default', GetCurrentResourceName(), 'Saloon_Menu',
-    {
-        title    = 'Saloon',
-
-        subtext    = 'Select Your Production',
-
-        align    = 'top-right',
-
-        elements = elements,
-    },
-    function(data, menu)
-        if(data.current.value) then
-            TriggerServerEvent("vesgoboy_craft:crafting",data.current.label,data.current.recipe,data.current.amount,data.current.resultitem,data.current.items)
-        end
-    end,
-    function(data, menu)
-        menu.close()
-        MenuCraft()
-    end)  
-end
-
-function MenuDrinks()
-    MenuData.CloseAll()
-    local elements = {}
-    for ib,iv in pairs(Config.Drinks) do
-        local labelitem = iv.label
-        local recipe = iv.recipe
-        local amount = iv.amount
-        local desc = iv.desc
-        local resultitem = iv.resultitem
-        local items = iv.items
-
-        table.insert(elements, {
-            label = labelitem, 
-            recipe = recipe,
-            amount = amount,
-            desc = "Produce<br>"..labelitem,
-            subdesc = "Ingredients<br><span style='color:red; font-size:20px;'>"..desc.."</span>",
-            resultitem = resultitem,
-            items = items,
-            value = ib,
-        })
-    end
-    MenuData.Open(
-    'default', GetCurrentResourceName(), 'Saloon_Menu',
-    {
-        title    = 'Saloon',
-
-        subtext    = 'Select Your Production',
-
-        align    = 'top-right',
-
-        elements = elements,
-    },
-    function(data, menu)
-        if(data.current.value) then
-            TriggerServerEvent("vesgoboy_craft:crafting",data.current.label,data.current.recipe,data.current.amount,data.current.resultitem,data.current.items)
-        end
-    end,
-    function(data, menu)
-        menu.close()
-        MenuCraft()
-    end)  
-end
-
-function SetupOpenPrompt()
-    Citizen.CreateThread(function()
-        local str = 'Enter Menu'
-        OpenPrompt = PromptRegisterBegin()
-        PromptSetControlAction(OpenPrompt, 0xCEFD9220) -- E --==BOTÃO==--
-        str = CreateVarString(10, 'LITERAL_STRING', str)
-        PromptSetText(OpenPrompt, str)
-        PromptSetEnabled(OpenPrompt, 1) -- 1 verdaeiro 0 falso
-        PromptSetVisible(OpenPrompt, 1) -- 1 verdaeiro 0 falso
-		PromptSetHoldMode(OpenPrompt, 5) -- UiPromptHasHoldModeCompleted -- SEGUNDOS
-		PromptSetGroup(OpenPrompt, PromptGroup)
-		PromptRegisterEnd(OpenPrompt)
-    end)
-end
 
 RegisterNetEvent('vesgoboy_crafting:animation')
 AddEventHandler('vesgoboy_crafting:animation', function() 

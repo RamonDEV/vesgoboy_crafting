@@ -1,13 +1,18 @@
 Config = {}
 Config.CraftTime = 8000
 Config.Textures = { cross = {"scoretimer_textures", "scoretimer_generic_cross"}, locked = {"menu_textures","stamp_locked_rank"}, tick = {"scoretimer_textures","scoretimer_generic_tick"}, money = {"inventory_items", "money_moneystack"}, alert = {"menu_textures", "menu_icon_alert"},}
+Config.Text = {
+    norecipe = "You Don't Have the Recipe to Produce",
+    nohaveitem = "You do not have what it takes to produce lacks",
+    received = "You Produced"
+}
 
 Config.Crafting = {
     [1] = {
         ['name'] = "Valentine Saloon",
         ['store'] = 1500,
         ['tablecraft'] = vector3(-365.3349, 753.2812, 115.9103),
-        ['job'] = "saloonvalentine",
+        ['job'] = "valentinesaloon",
     },
     [2] = {
         ['name'] = "Black Water Saloon",
@@ -46,7 +51,38 @@ Config.Crafting = {
         ['job'] = "saloonsaintdenis",
     },
 }
+--===========================================START CRAFT FOR LOCATIONS WITH JOB = FALSE==================================================--
+Config.FoodsNoJob = {
+    [1] = { -- ok
+        ['label'] = "Ensopado", --- LABEL DO ITEM
+        ['recipe'] = 'ensopadonobre', --- NOME DO ITEM DA RECEITA(CASO PRECISE DE RECEITA PARA CRAFTAR) EXEMPLO: RECEITAGOMADEMAITAKE
+        ['amount'] = false, --- QUANTIDADE FALSE PARA RECEBER 1, CASO QUEIRA RECEBER MAIS DIGITE A QUANTIDADE OU USE UM MATH.RANDOM(1,3) DE 1 A 3 ITENS
+        ['desc'] = "2x Carne Veado Assado<br>4x Cenouras<br>1x Água", -- RECEITA QUE VAI APARECER NA DESCRISÃO
+        ['resultitem'] = 'ensopadonobre', --- OQUE VAI RECEBER COM ESSE CRAFT NOME DO ITEM
+        ['items'] = {   --- RECEITAS, SEM ESSES ITENS NÃO É POSSIVEL FAZER O CRAFT
+            {['name'] = 'assadavenison', ['count'] = 2},
+            {['name'] = 'carrot', ['count'] = 4},
+            {['name'] = 'water', ['count'] = 1},
+        }
+    },
+}
 
+Config.DrinksNoJob = {
+    [1] = { -- ok
+        ['label'] = "Cana", --- LABEL DO ITEM
+        ['recipe'] = false, --- NOME DO ITEM DA RECEITA(CASO PRECISE DE RECEITA PARA CRAFTAR) EXEMPLO: RECEITAGOMADEMAITAKE
+        ['amount'] = false, --- QUANTIDADE FALSE PARA RECEBER 1, CASO QUEIRA RECEBER MAIS DIGITE A QUANTIDADE OU USE UM MATH.RANDOM(1,3) DE 1 A 3 ITENS
+        ['desc'] = "2x Cana de Açucar<br>1x Água", -- RECEITA QUE VAI APARECER NA DESCRISÃO
+        ['resultitem'] = 'caldodecana', --- OQUE VAI RECEBER COM ESSE CRAFT NOME DO ITEM
+        ['items'] = {   --- RECEITAS, SEM ESSES ITENS NÃO É POSSIVEL FAZER O CRAFT
+            {['name'] = 'canadeacucar', ['count'] = 2},
+            {['name'] = 'water', ['count'] = 1},
+        }
+    },
+}
+--===========================================END CRAFT FOR LOCATIONS WITH JOB = FALSE==================================================--
+
+--===========================================START CRAFT FOR LOCATIONS WITH JOB===================================================--
 Config.Foods = {
     [1] = { -- ok
         ['label'] = "Ensopato de Carne Nobre", --- LABEL DO ITEM
@@ -75,9 +111,4 @@ Config.Drinks = {
         }
     },
 }
-
-Config.Text = {
-    norecipe = "You Don't Have the Recipe to Produce",
-    nohaveitem = "You do not have what it takes to produce lacks",
-    received = "You Produced"
-}
+--===========================================END CRAFT FOR LOCATIONS WITH JOB===================================================--
