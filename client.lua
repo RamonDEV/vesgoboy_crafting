@@ -25,11 +25,12 @@ Citizen.CreateThread(function()
             local tablecoords = iv.tablecraft
             local between = GetDistanceBetweenCoords(pcoords, tablecoords, true)
             if between < 1.5 and not activebuttom then
-                if pjob == jobcraft or jobcraft == false then
+                if jobcraft == false or jobcraft == pjob then
                     if IsPedOnMount(PlayerPedId()) or IsPedInAnyVehicle(PlayerPedId()) or IsPedDeadOrDying(PlayerPedId()) or IsEntityInWater(PlayerPedId()) or IsPedClimbing(PlayerPedId()) or not IsPedOnFoot(PlayerPedId()) or IsPedSittingInAnyVehicle(PlayerPedId()) then
                         MenuData.CloseAll()
                         return false
                     end
+
                     local label  = CreateVarString(10, 'LITERAL_STRING', name)
                     PromptSetActiveGroupThisFrame(PromptGroup, label)
                     if Citizen.InvokeNative(0xE0F65F0640EF0617,OpenPrompt) then -- UiPromptHasHoldModeCompleted 
@@ -40,7 +41,9 @@ Citizen.CreateThread(function()
                     end
                 end
             elseif between > 1.5 and between < 2.0 then
-                MenuData.CloseAll()
+                if MenuData ~= nil then
+                    MenuData.CloseAll()
+                end
             end
         end
     end
