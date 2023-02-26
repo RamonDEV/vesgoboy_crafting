@@ -12,7 +12,7 @@ Config.Crafting = {
         ['name'] = "Valentine Saloon",
         ['store'] = 1500,
         ['tablecraft'] = vector3(-365.3349, 753.2812, 115.9103),
-        ['job'] = "valentinesaloon",
+        ['job'] = false,
     },
     [2] = {
         ['name'] = "Black Water Saloon",
@@ -30,7 +30,7 @@ Config.Crafting = {
         ['name'] = "Tumbleweed Saloon",
         ['store'] = 1500,
         ['tablecraft'] = vector3(-5519.606, -2905.956, -1.751306),
-        ['job'] = "saloontumbleweed",
+        ['job'] = false,
     },
     [5] = {
         ['name'] = "Rhodes Saloon",

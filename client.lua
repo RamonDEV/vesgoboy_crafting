@@ -30,7 +30,6 @@ Citizen.CreateThread(function()
                         MenuData.CloseAll()
                         return false
                     end
-
                     local label  = CreateVarString(10, 'LITERAL_STRING', name)
                     PromptSetActiveGroupThisFrame(PromptGroup, label)
                     if Citizen.InvokeNative(0xE0F65F0640EF0617,OpenPrompt) then -- UiPromptHasHoldModeCompleted 
